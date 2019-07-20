@@ -1,9 +1,155 @@
 <html>
   <head>
-    <title>User pages for nturton</title>
+    <title></title>
+    <style>
+      body {
+        background:#448;
+        width:100%;
+        height:100%;
+        margin:0;
+        overflow:hidden;
+      }
+    </style>
   </head>
-  <body>
-    <h1>Hello</h1>
-    Hello, world!
+  <body
+    onresize="redraw()"
+    onmousedown="mousedown(event)"
+    onmouseup="mouseup(event)"
+    onmousemove="mousemove(event)"
+  >
+    <canvas width="400" height="400" id="c" style="background:#008"/>
   </body>
+  <script>
+    g = Object();
+    g.vars = [
+     100,             // Capacitance.
+     100,             // Inductance.
+     100,             // Resistance.
+     null,            // Left edge.
+     null,            // Right edge.
+    ];
+    g.sel = null;     // Selected variable.
+    g.ox = null;      // Old x value.
+    g.moved = 0;      // The mouse moved this far.
+    g.queued = 0;     // Redraw is queued.
+
+    function redraw() {
+      box = document.body.getBoundingClientRect();
+      var c = document.getElementById("c");
+      var w = box.width;
+      var h = box.height;
+      c.width = w;
+      c.height = h;
+      var ctx = c.getContext("2d");
+
+      ctx.fillStyle = "#ccc";
+      ctx.lineWidth = "3";
+
+      for (var i=0; i<5; i++) {
+        ctx.beginPath()
+        ctx.moveTo(0,30+30*i);
+        ctx.lineTo(w,30+30*i);
+        var x = g.vars[i];
+        if (x != null) {
+          ctx.moveTo(x,20+30*i);
+          ctx.lineTo(x,40+30*i);
+          ctx.strokeStyle = "#ccc";
+        } else {
+          ctx.strokeStyle = "#888";
+        }
+        ctx.stroke();
+      }
+
+      var h1 = 6*30;
+      var h2 = h-h1;
+      var y1 = (h1+h)/2;
+
+      ctx.strokeStyle = "#ccc";
+      ctx.beginPath();
+      ctx.moveTo(0,y1);
+      ctx.lineTo(w,y1);
+      ctx.moveTo(0,y1);
+      for(var x=0;x<w;x++) {
+        ctx.lineTo(x,y1+(h2/3)*Math.sin(x/20));
+      }
+      ctx.stroke();
+    }
+
+    function timeout() {
+      g.queued = 0;
+      redraw();
+    }
+
+    function queue_redraw() {
+      if (g.queued) {
+        return;
+      }
+      setTimeout(timeout, 10);
+      g.queued = 1;
+    }
+
+    function y_to_i(y) {
+      var i = Math.floor((y-20)/30);
+      var dy = y - (i*30 + 20);
+      if (i >= 0 && i < 5 && dy <= 40) {
+        return i;
+      }
+      return null;
+    }
+
+    function deselect() {
+      if (g.sel != null) {
+        g.vars[g.sel] = g.ox;
+      }
+      g.sel = null;
+    }
+
+    function mousedown(e) {
+      deselect();
+      var i = y_to_i(e.y);
+      if (i != null) {
+        g.sel = i;
+        g.ox = g.vars[i];
+        g.moved = 0;
+        g.vars[i] = e.x;
+      }
+      queue_redraw();
+    }
+
+    function mouseup(e) {
+      var i = y_to_i(e.y);
+      if (g.sel != null && i == g.sel) {
+        if (i >= 3 && g.moved < 2 && g.ox != null) {
+          g.vars[i] = null;
+        } else {
+          g.vars[i] = e.x;
+        }
+        g.sel = null;
+      } else {
+        deselect();
+      }
+      queue_redraw();
+    }
+
+    function mousemove(e) {
+      var i = y_to_i(e.y);
+      if ((e.buttons & 1) == 0) {
+        deselect();
+      }
+      if (g.sel != null) {
+        var dx = Math.abs(e.x-g.ox)
+        if (dx > g.moved) {
+          g.moved = dx;
+        }
+        if (i == g.sel) {
+          g.vars[g.sel] = e.x;
+        } else {
+          g.vars[g.sel] = g.ox;
+        }
+      }
+      queue_redraw();
+    }
+
+    redraw();
+  </script>
 </html>
