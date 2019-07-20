@@ -9,6 +9,9 @@
         margin:0;
         overflow:hidden;
       }
+      #c {
+        background:#000;
+      }
     </style>
   </head>
   <body
@@ -17,7 +20,7 @@
     onmouseup="mouseup(event)"
     onmousemove="mousemove(event)"
   >
-    <canvas width="400" height="400" id="c" style="background:#008"/>
+    <canvas width="400" height="400" id="c" />
   </body>
   <script>
     g = Object();
@@ -68,9 +71,48 @@
       ctx.beginPath();
       ctx.moveTo(0,y1);
       ctx.lineTo(w,y1);
+      ctx.stroke();
+
+      var dt = 0.05;
+
+      ctx.strokeStyle = "#cc0";
+      ctx.beginPath();
       ctx.moveTo(0,y1);
       for(var x=0;x<w;x++) {
-        ctx.lineTo(x,y1+(h2/3)*Math.sin(x/20));
+        var y;
+        if ( (g.vars[3] != null && x < g.vars[3]) ||
+             (g.vars[4] != null && x > g.vars[4]) ) {
+          y = 0;
+        } else {
+          y = (h2/3)*Math.sin(x*dt);
+        }
+        ctx.lineTo(x,y1+y);
+      }
+      ctx.stroke();
+
+      var C = g.vars[0] * 4 / w;
+      var L = g.vars[1] * 4 / w;
+      var R = g.vars[2] * 4 / w;
+      var Vc = 0;
+      var Il = 0;
+      ctx.strokeStyle = "#0cc";
+      ctx.beginPath();
+      ctx.moveTo(0,y1);
+      for(var x=0;x<w;x++) {
+        var y;
+        if ( (g.vars[3] != null && x < g.vars[3]) ||
+             (g.vars[4] != null && x > g.vars[4]) ) {
+          y = 0;
+        } else {
+          y = (h2/3)*Math.sin(x*dt);
+        }
+        var Vr = y - Vc;
+        ctx.lineTo(x,y1+Vr);
+
+        var Ir = Vr/R;
+        var Ic = Ir - Il;
+        Vc = Vc + (Ic/C)*dt;
+        Il = Il + (Vc/L)*dt;
       }
       ctx.stroke();
     }
@@ -91,7 +133,7 @@
     function y_to_i(y) {
       var i = Math.floor((y-20)/30);
       var dy = y - (i*30 + 20);
-      if (i >= 0 && i < 5 && dy <= 40) {
+      if (i >= 0 && i < 5 && dy <= 20) {
         return i;
       }
       return null;
@@ -110,19 +152,18 @@
       if (i != null) {
         g.sel = i;
         g.ox = g.vars[i];
-        g.moved = 0;
+        g.moved = Math.abs(e.x-g.ox);
         g.vars[i] = e.x;
       }
       queue_redraw();
     }
 
     function mouseup(e) {
-      var i = y_to_i(e.y);
-      if (g.sel != null && i == g.sel) {
-        if (i >= 3 && g.moved < 2 && g.ox != null) {
-          g.vars[i] = null;
+      if (g.sel != null) {
+        if (g.sel >= 3 && g.moved < 5 && g.ox != null) {
+          g.vars[g.sel] = null;
         } else {
-          g.vars[i] = e.x;
+          g.vars[g.sel] = e.x;
         }
         g.sel = null;
       } else {
@@ -132,7 +173,6 @@
     }
 
     function mousemove(e) {
-      var i = y_to_i(e.y);
       if ((e.buttons & 1) == 0) {
         deselect();
       }
@@ -141,11 +181,7 @@
         if (dx > g.moved) {
           g.moved = dx;
         }
-        if (i == g.sel) {
-          g.vars[g.sel] = e.x;
-        } else {
-          g.vars[g.sel] = g.ox;
-        }
+        g.vars[g.sel] = e.x;
       }
       queue_redraw();
     }
