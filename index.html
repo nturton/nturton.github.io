@@ -75,46 +75,33 @@
 
       var dt = 0.05;
 
-      ctx.strokeStyle = "#cc0";
-      ctx.beginPath();
-      ctx.moveTo(0,y1);
-      for(var x=0;x<w;x++) {
-        var y;
-        if ( (g.vars[3] != null && x < g.vars[3]) ||
-             (g.vars[4] != null && x > g.vars[4]) ) {
-          y = 0;
-        } else {
-          y = (h2/3)*Math.sin(x*dt);
-        }
-        ctx.lineTo(x,y1+y);
-      }
-      ctx.stroke();
+      for(var i=0; i<3; i++) {
+        var C = g.vars[0] * 4 / w;
+        var L = g.vars[1] * 4 / w;
+        var R = g.vars[2] * 4 / w;
+        var Vc = 0;
+        var Il = 0;
+        ctx.strokeStyle = [ "#cc0", "#0cc", "#0c0" ][i];
+        ctx.beginPath();
+        ctx.moveTo(0,y1);
+        for(var x=0;x<w;x++) {
+          var y;
+          if ( (g.vars[3] != null && x < g.vars[3]) ||
+               (g.vars[4] != null && x > g.vars[4]) ) {
+            Vi = 0;
+          } else {
+            Vi = (h2/3)*Math.sin(x*dt);
+          }
+          var Vr = Vi - Vc;
+          ctx.lineTo(x,y1+[Vi,Vr,Vc][i]);
 
-      var C = g.vars[0] * 4 / w;
-      var L = g.vars[1] * 4 / w;
-      var R = g.vars[2] * 4 / w;
-      var Vc = 0;
-      var Il = 0;
-      ctx.strokeStyle = "#0cc";
-      ctx.beginPath();
-      ctx.moveTo(0,y1);
-      for(var x=0;x<w;x++) {
-        var y;
-        if ( (g.vars[3] != null && x < g.vars[3]) ||
-             (g.vars[4] != null && x > g.vars[4]) ) {
-          y = 0;
-        } else {
-          y = (h2/3)*Math.sin(x*dt);
+          var Ir = Vr/R;
+          var Ic = Ir - Il;
+          Vc = Vc + (Ic/C)*dt;
+          Il = Il + (Vc/L)*dt;
         }
-        var Vr = y - Vc;
-        ctx.lineTo(x,y1+Vr);
-
-        var Ir = Vr/R;
-        var Ic = Ir - Il;
-        Vc = Vc + (Ic/C)*dt;
-        Il = Il + (Vc/L)*dt;
+        ctx.stroke();
       }
-      ctx.stroke();
     }
 
     function timeout() {
