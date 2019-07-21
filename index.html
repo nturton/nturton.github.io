@@ -75,7 +75,7 @@
 
       var dt = 0.05;
 
-      for(var i=0; i<3; i++) {
+      for(var i=0; i<4; i++) {
         var C = g.vars[0] * 4 / w;
         var L = g.vars[1] * 4 / w;
         var R = g.vars[2] * 4 / w;
@@ -131,7 +131,7 @@
           Il = -Vis / (L+L*rcrl*rcrl)
         }
 
-        ctx.strokeStyle = [ "#cc0", "#0cc", "#0c0" ][i];
+        ctx.strokeStyle = [ "#cc0", "#0cc", "#0c0", "#c60" ][i];
         ctx.beginPath();
         for(var x=0;x<w;x++) {
           var y;
@@ -142,7 +142,7 @@
             Vi = Vis*Math.sin(x*dt);
           }
           var Vr = Vi - Vc;
-          ctx.lineTo(x,y1+[Vi,Vr,Vc][i]);
+          ctx.lineTo(x,y1+[Vi,Vr,Vc,Il/4][i]);
 
           var Ir = Vr/R;
           var Ic = Ir - Il;
