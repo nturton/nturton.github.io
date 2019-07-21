@@ -1,9 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+
+  Copyright (C) Neil Turton 2019.
+
+  Oscillator simulation by Neil Turton is licensed under a Creative
+  Commons Attribution 4.0 International License.
+
+-->
 <html>
   <head>
-    <title></title>
+    <meta charset="UTF-8">
+    <title>Oscillator simulation</title>
     <style>
       body {
-        background:#448;
+        background:#000;
+        color: #ccc;
         width:100%;
         height:100%;
         margin:0;
@@ -11,6 +23,20 @@
       }
       #c {
         background:#000;
+      }
+      #copyright {
+        position: fixed;
+        left: 0px;
+        bottom: 0px;
+        width: 100%;
+        margin: 5px;
+      }
+      #copyright img {
+        float: left;
+        margin: 5px;
+      }
+      #copyright a {
+        color: #88f;
       }
     </style>
   </head>
@@ -20,6 +46,18 @@
     onmouseup="mouseup(event)"
     onmousemove="mousemove(event)"
   >
+    <div id="copyright">
+      <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+        <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a>
+
+      <span xmlns:dct="http://purl.org/dc/terms/"
+      property="dct:title">Oscillator simulation</span>
+      by <span xmlns:cc="http://creativecommons.org/ns#"
+      property="cc:attributionName">Neil Turton</span> is licensed
+      under a <a rel="license"
+      href="http://creativecommons.org/licenses/by/4.0/">Creative
+      Commons Attribution 4.0 International License</a>.
+    </div>
     <canvas width="400" height="400" id="c" />
   </body>
   <script>
@@ -37,10 +75,9 @@
     g.queued = 0;     // Redraw is queued.
 
     function redraw() {
-      box = document.body.getBoundingClientRect();
       var c = document.getElementById("c");
-      var w = box.width;
-      var h = box.height;
+      var w = window.innerWidth;
+      var h = window.innerHeight;
       c.width = w;
       c.height = h;
       var ctx = c.getContext("2d");
