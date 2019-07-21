@@ -185,7 +185,7 @@
             Vi = Vis*Math.sin(x*dt);
           }
           var Vr = Vi - Vc;
-          ctx.lineTo(x,y1+[Vi,Vr,Vc,Il/4][i]);
+          ctx.lineTo(x,y1-[Vi,Vr,Vc,Il/4][i]);
 
           var Ir = Vr/R;
           var Ic = Ir - Il;
