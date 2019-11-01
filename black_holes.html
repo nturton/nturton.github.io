@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+            "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+
+  Copyright (C) Neil Turton 2019.
+
+  SVG test by Neil Turton is licensed under a Creative Commons
+  Attribution 4.0 International License.
+
+-->
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Black-hole sizes</title>
+<script src="brython.js"></script>
+<script src="brython_stdlib.js"></script>
+</head>
+<body onload="brython(1)">
+
+<script type="text/python3">
+from browser import document, alert
+import math
+
+fmt = "%8.3e"
+
+pi = math.pi
+G = 6.67430e-11
+c = 299792458.
+h_bar = 1.054571817e-34
+k_B = 1.380649e-23
+
+g_mass = None
+g_radius = None
+g_temperature = None
+g_power = None
+g_lifetime = None
+
+def set_mass(M):
+  global g_mass
+  M_str = fmt % M
+  if g_mass == M_str:
+    return
+
+  r = 2.*G*M / c / c
+  T = h_bar*(c**3)/8/pi/G/k_B/M
+  P = h_bar*(c**6)/15360/pi/G/G/M/M
+  t = 5120*pi*G*G*M*M*M/h_bar/c/c/c/c
+
+  g_mass = M_str
+  g_radius = fmt % r
+  g_temperature = fmt % T
+  g_power = fmt % P
+  g_lifetime = fmt % t
+  document["mass"].value = M_str
+  document["radius"].value = g_radius
+  document["temperature"].value = g_temperature
+  document["power"].value = g_power
+  document["lifetime"].value = g_lifetime
+
+def set_radius(r):
+  M = r*c*c/2/G
+  set_mass(M)
+
+def set_temperature(T):
+  M = h_bar*(c**3)/8/pi/G/k_B/T
+  set_mass(M)
+
+def set_power(P):
+  M2 = h_bar*(c**6)/15360/pi/G/G/P
+  M = math.sqrt(M2)
+  set_mass(M)
+
+def set_lifetime(t):
+  M3 = t*h_bar*(c**4)/5120/pi/G/G
+  M = pow(M3,1./3)
+  set_mass(M)
+
+def change_mass(ev):
+  M_str = document["mass"].value
+  if g_mass == M_str:
+    return
+  m = float(M_str)
+  set_mass(m)
+
+def change_radius(ev):
+  r_str = document["radius"].value
+  if g_radius == r_str:
+    return
+  r = float(r_str)
+  set_radius(r)
+
+def change_temperature(ev):
+  T_str = document["temperature"].value
+  if g_temperature == T_str:
+    return
+  T = float(T_str)
+  set_temperature(T)
+
+def change_power(ev):
+  P_str = document["power"].value
+  if g_power == P_str:
+    return
+  P = float(P_str)
+  set_power(P)
+
+def change_lifetime(ev):
+  t_str = document["lifetime"].value
+  if g_lifetime == t_str:
+    return
+  t = float(t_str)
+  set_lifetime(t)
+
+document["mass"].bind("change", change_mass)
+document["radius"].bind("change", change_radius)
+document["temperature"].bind("change", change_temperature)
+document["power"].bind("change", change_power)
+document["lifetime"].bind("change", change_lifetime)
+</script>
+
+<h1>Black-hole sizes</h1>
+<p>
+  The table below gives the properties of black holes of various
+  sizes.
+</p>
+<table border=1>
+<tr>
+  <th>Mass (M)</th>
+  <th>Radius (r<sub>s</sub>)</th>
+  <th>Temperature (T)</th>
+  <th>Radiation power (P)</th>
+  <th>Lifetime (t)</th>
+  <th>Description</th>
+</tr>
+
+<tr>
+  <td>2.693&#215;10<sup>25</sup>kg</td>
+  <td>0.040m</td>
+  <td>4.556&#215;10<sup>-3</sup>K</td>
+  <td>4.910&#215;10<sup>-19</sup>W</td>
+  <td>1.643&#215;10<sup>60</sup>s</td>
+  <td>The same radius as an apple.</td>
+</tr>
+
+<tr>
+  <td>4.501&#215;10<sup>22</sup>kg</td>
+  <td>6.685&#215;10<sup>-5</sup>m</td>
+  <td>2.725K</td>
+  <td>1.757&#215;10<sup>-13</sup>W</td>
+  <td>7.673&#215;10<sup>51</sup>s</td>
+  <td>The same temperature as the CMB.</td>
+</tr>
+
+<tr>
+  <td>4.090&#215;10<sup>19</sup>kg</td>
+  <td>6.074&#215;10<sup>-8</sup>m</td>
+  <td>3000K</td>
+  <td>2.129&#215;10<sup>-7</sup>W</td>
+  <td>5.754&#215;10<sup>42</sup>s</td>
+  <td>As hot as an incandescent light bulb.</td>
+</tr>
+
+<tr>
+  <td>5.967&#215;10<sup>14</sup>kg</td>
+  <td>8.863&#215;10<sup>-13</sup>m</td>
+  <td>2.055&#215;10<sup>8</sup>K</td>
+  <td>1000W</td>
+  <td>1.787&#215;10<sup>28</sup>s</td>
+  <td>The same power output as a room heater.</td>
+</tr>
+
+<tr>
+  <td>2.282&#215;10<sup>5</sup>kg</td>
+  <td>3.389&#215;10<sup>-22</sup>m</td>
+  <td>5.375&#215;10<sup>17</sup>K</td>
+  <td>6.837&#215;10<sup>21</sup>W</td>
+  <td>1s</td>
+  <td>Has a lifetime of 1 second.</td>
+</tr>
+
+
+<tr>
+  <td>0.150kg</td>
+  <td>2.228&#215;10<sup>-28</sup>m</td>
+  <td>8.179&#215;10<sup>23</sup>K</td>
+  <td>1.583&#215;10<sup>34</sup>W</td>
+  <td>2.839&#215;10<sup>-19</sup>s</td>
+  <td>The same mass as an apple.</td>
+</tr>
+
+<!--
+
+<tr>
+  <td>kg</td>
+  <td>m</td>
+  <td>K</td>
+  <td>W</td>
+  <td>s</td>
+  <td></td>
+</tr>
+
+-->
+
+<tr>
+  <td><input id="mass" />kg</td>
+  <td><input id="radius" />m</td>
+  <td><input id="temperature" />K</td>
+  <td><input id="power" />W</td>
+  <td><input id="lifetime" />s</td>
+  <td>User input</td>
+</tr>
+</table>
+</body>
+</html>
